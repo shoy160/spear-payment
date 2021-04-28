@@ -1,0 +1,38 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="appsettings.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="appsettings.json">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Acb.Dapper.MySql" Version="1.9.0" />
+    <PackageReference Include="Acb.Framework" Version="1.9.1" />
+    <PackageReference Include="Acb.MicroService.Client" Version="1.9.2" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.7.0" />
+    <PackageReference Include="MSTest.TestAdapter" Version="1.2.1" />
+    <PackageReference Include="MSTest.TestFramework" Version="1.2.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Acb.Payment.Business\Acb.Payment.Business.csproj" />
+    <ProjectReference Include="..\Acb.Payment.Contracts\Acb.Payment.Contracts.csproj" />
+    <ProjectReference Include="..\Acb.Sdk.Payment\Acb.Sdk.Payment.csproj" />
+    <ProjectReference Include="..\PaySharp\PaySharp.Alipay\PaySharp.Alipay.csproj" />
+    <ProjectReference Include="..\PaySharp\PaySharp.Core\PaySharp.Core.csproj" />
+    <ProjectReference Include="..\PaySharp\PaySharp.Wechatpay\PaySharp.Wechatpay.csproj" />
+  </ItemGroup>
+
+</Project>
