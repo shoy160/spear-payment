@@ -1,11 +1,12 @@
-﻿using Acb.Core;
-using Acb.Core.Exceptions;
-using Acb.Core.Logging;
+﻿using Spear.Core;
+using Spear.Core.Exceptions;
 using PaySharp.Core.Events;
 using PaySharp.Core.Exceptions;
 using PaySharp.Core.Utils;
 using System;
 using System.Threading.Tasks;
+using Spear.Core.Dependency;
+using Microsoft.Extensions.Logging;
 
 namespace PaySharp.Core.Notify
 {
@@ -79,12 +80,12 @@ namespace PaySharp.Core.Notify
         /// </summary>
         public async Task<DResult> ReceivedAsync()
         {
-            var logger = LogManager.Logger<Notify>();
+            var logger = CurrentIocManager.CreateLogger<Notify>();
             var gateway = NotifyProcess.GetGateway(_gatewayFunc);
             var notifyData = string.IsNullOrWhiteSpace(gateway.GatewayData.Raw)
                 ? gateway.GatewayData.ToJson()
                 : gateway.GatewayData.Raw;
-            logger.Debug($"notify:{notifyData}");
+            logger.LogDebug($"notify:{notifyData}");
             if (gateway is NullGateway)
             {
                 OnUnknownGateway(new UnknownGatewayEventArgs(gateway));
@@ -122,7 +123,7 @@ namespace PaySharp.Core.Notify
                 switch (ex)
                 {
                     case BusiException busi:
-                        logger.Warn($"支付回调业务异常：{busi.Code},{busi.Message}");
+                        logger.LogWarning($"支付回调业务异常：{busi.Code},{busi.Message}");
                         result = true;
                         d.Code = busi.Code;
                         break;
@@ -134,7 +135,7 @@ namespace PaySharp.Core.Notify
                         break;
                     default:
                         result = false;
-                        logger.Error(ex.Message, ex);
+                        logger.LogError(ex, ex.Message);
                         break;
                 }
                 if (result)

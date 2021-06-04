@@ -1,0 +1,54 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DocumentationFile>bin\Debug\netcoreapp3.1\Spear.Gateway.Payment.xml</DocumentationFile>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DocumentationFile>bin\Release\netcoreapp3.1\Spear.Gateway.Payment.xml</DocumentationFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="source\**" />
+    <Compile Remove="_config_cache\**" />
+    <Compile Remove="_logs\**" />
+    <Content Remove="source\**" />
+    <Content Remove="_config_cache\**" />
+    <Content Remove="_logs\**" />
+    <EmbeddedResource Remove="source\**" />
+    <EmbeddedResource Remove="_config_cache\**" />
+    <EmbeddedResource Remove="_logs\**" />
+    <None Remove="source\**" />
+    <None Remove="_config_cache\**" />
+    <None Remove="_logs\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="wwwroot\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Spear.Dapper.Mysql" Version="0.3.1" />
+    <PackageReference Include="Spear.EventBus.RabbitMq" Version="0.3.1" />
+    <PackageReference Include="Spear.WebApi" Version="0.3.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Spear.Payment.Business\Spear.Payment.Business.csproj" />
+    <ProjectReference Include="..\Spear.Payment.Contracts\Spear.Payment.Contracts.csproj" />
+    <ProjectReference Include="..\PaySharp\PaySharp.Alipay\PaySharp.Alipay.csproj" />
+    <ProjectReference Include="..\PaySharp\PaySharp.Core\PaySharp.Core.csproj" />
+    <ProjectReference Include="..\PaySharp\PaySharp.Wechatpay\PaySharp.Wechatpay.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Dockerfile">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+</Project>

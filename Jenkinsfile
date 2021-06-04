@@ -27,7 +27,7 @@ pipeline {
     }
   }
   environment {
-    ACB_PROJECT = 'Acb.Gateway.Payment'
+    ACB_PROJECT = 'Spear.Gateway.Payment'
     ACB_IMAGE_NAME = 'gateway-payment'
     ACB_MODE = 'Test'
     ACB_DOCKER_HOST = 'docker.dev'

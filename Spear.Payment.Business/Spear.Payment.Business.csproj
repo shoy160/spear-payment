@@ -1,0 +1,16 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Spear.AutoMapper" Version="0.3.1" />
+    <PackageReference Include="Spear.Dapper" Version="0.3.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Spear.Payment.Contracts\Spear.Payment.Contracts.csproj" />
+  </ItemGroup>
+
+</Project>

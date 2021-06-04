@@ -1,17 +1,14 @@
-﻿using Acb.Core.Logging;
-using PaySharp.Core;
+﻿using PaySharp.Core;
 using PaySharp.Core.Exceptions;
 using PaySharp.Core.Request;
 using PaySharp.Core.Response;
 using PaySharp.Core.Utils;
-using PaySharp.Wechatpay.Domain;
 using PaySharp.Wechatpay.Request;
 using PaySharp.Wechatpay.Response;
+using Spear.Core.Exceptions;
 using System;
-using System.IO;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
-using Acb.Core.Exceptions;
 
 namespace PaySharp.Wechatpay
 {
@@ -30,8 +27,8 @@ namespace PaySharp.Wechatpay
             if (((BaseRequest<TModel, TResponse>)request).IsUseCert)
             {
                 //证书密码默认为您的商户ID
-                if (string.IsNullOrWhiteSpace(merchant.SslCertPassword))                
-                    merchant.SslCertPassword = merchant.MchId;                
+                if (string.IsNullOrWhiteSpace(merchant.SslCertPassword))
+                    merchant.SslCertPassword = merchant.MchId;
                 cert = Util.CreateCert(merchant.SslCertPath, merchant.SslCertPassword);
                 if (cert == null)
                     throw new BusiException("商户证书异常，不能执行操作");
