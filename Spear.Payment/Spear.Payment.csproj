@@ -9,7 +9,8 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <DocumentationFile>bin\Release\netcoreapp3.1\Spear.Gateway.Payment.xml</DocumentationFile>
+    <DocumentationFile>bin\Release\netcoreapp3.1\Spear.Payment.xml</DocumentationFile>
+    <OutputPath>bin\Release\netcoreapp3.1\</OutputPath>
   </PropertyGroup>
 
   <ItemGroup>

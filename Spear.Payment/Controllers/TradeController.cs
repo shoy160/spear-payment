@@ -200,6 +200,8 @@ namespace Spear.Gateway.Payment.Controllers
                 var resp = gateway.Execute(wechatReq);
                 if (resp.ReturnCode != "SUCCESS")
                 {
+                    if (!string.IsNullOrWhiteSpace(resp.ReturnMsg))
+                        return Error(resp.ReturnMsg);
                     return Error($"{resp.ErrCode},{resp.ErrCodeDes}");
                 }
 

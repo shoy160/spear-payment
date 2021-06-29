@@ -8,6 +8,9 @@ using PaySharp.Alipay.Domain;
 using PaySharp.Alipay.Request;
 using PaySharp.Core.Response;
 using System.Threading.Tasks;
+using Spear.Core.Extensions;
+using Spear.Core.Timing;
+using Spear.Payment.Contracts.Dtos;
 
 namespace Spear.Gateway.Payment.Controllers
 {
@@ -15,10 +18,31 @@ namespace Spear.Gateway.Payment.Controllers
     [Route("alipay")]
     public class AlipayController : PaymentController<AlipayGateway>
     {
-        private readonly ITradeContract _tradeContract;
-        public AlipayController(ITradeContract tradeContract) : base(PaymentMode.Alipay)
+        public AlipayController() : base(PaymentMode.Alipay)
         {
-            _tradeContract = tradeContract;
+        }
+
+        private T ParsePayModel<T>(TradeDto dto, VPaymentInput input)
+            where T : BasePayModel, new()
+        {
+            var model = new T
+            {
+                OutTradeNo = dto.TradeNo,
+                TotalAmount = dto.Amount / 100D,
+                Subject = dto.Title,
+                Body = dto.Body
+            };
+            if (!string.IsNullOrWhiteSpace(dto.Extend))
+            {
+                model.PassbackParams = dto.Extend.UrlEncode();
+            }
+            if (input.Timeout.HasValue && input.Timeout > 0)
+            {
+                //过期时间
+                model.TimeExpire = Clock.Now.AddSeconds(input.Timeout.Value).ToString("yyyy-MM-dd HH:mm");
+            }
+
+            return model;
         }
 
         /// <summary> 网页支付(跳转) </summary>
@@ -30,13 +54,8 @@ namespace Spear.Gateway.Payment.Controllers
             var dto = await CreateTrade(PaymentType.Web, input);
 
             var request = new WebPayRequest();
-            request.AddGatewayData(new WebPayModel
-            {
-                OutTradeNo = dto.TradeNo,
-                TotalAmount = dto.Amount / 100D,
-                Subject = dto.Title,
-                Body = dto.Body
-            });
+            var payModel = ParsePayModel<WebPayModel>(dto, input);
+            request.AddGatewayData(payModel);
             request.ReturnUrl = input.RedirectUrl;
             var response = Gateway(PaymentType.Web).Execute(request);
             return Succ(response.Html);
@@ -51,14 +70,9 @@ namespace Spear.Gateway.Payment.Controllers
         {
             var dto = await CreateTrade(PaymentType.H5, input);
             var request = new WapPayRequest();
-            request.AddGatewayData(new WapPayModel
-            {
-                OutTradeNo = dto.TradeNo,
-                TotalAmount = dto.Amount / 100D,
-                Subject = dto.Title,
-                Body = dto.Body,
-                QuitUrl = input.RedirectUrl
-            });
+            var payModel = ParsePayModel<WapPayModel>(dto, input);
+            payModel.QuitUrl = input.RedirectUrl;
+            request.AddGatewayData(payModel);
             request.ReturnUrl = input.RedirectUrl;
             var response = Gateway(PaymentType.H5).Execute(request);
             return Succ(response.Url);
@@ -72,13 +86,8 @@ namespace Spear.Gateway.Payment.Controllers
         {
             var dto = await CreateTrade(PaymentType.App, input);
             var request = new AppPayRequest();
-            request.AddGatewayData(new AppPayModel
-            {
-                OutTradeNo = dto.TradeNo,
-                TotalAmount = dto.Amount / 100D,
-                Subject = dto.Title,
-                Body = dto.Body
-            });
+            var payModel = ParsePayModel<AppPayModel>(dto, input);
+            request.AddGatewayData(payModel);
             request.ReturnUrl = input.RedirectUrl;
             var response = Gateway(PaymentType.App).Execute(request);
             return Succ(response.OrderInfo);

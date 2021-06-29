@@ -24,6 +24,9 @@ namespace Spear.Gateway.Payment.ViewModels
         /// <summary> 扩展信息,通知时原样返回 </summary>
         public string Extend { get; set; }
 
+        /// <summary> 支付过期时间(秒) </summary>
+        public int? Timeout { get; set; }
+
         /// <summary> 跳转链接 </summary>
         public string RedirectUrl { get; set; }
     }

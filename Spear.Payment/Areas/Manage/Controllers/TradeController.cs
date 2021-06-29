@@ -136,7 +136,9 @@ namespace Spear.Gateway.Payment.Areas.Manage.Controllers
                 }
                 if (resp.ReturnCode != "SUCCESS")
                 {
-                    return Error($"{resp.ReturnCode},{resp.ReturnMsg}");
+                    if (!string.IsNullOrWhiteSpace(resp.ReturnMsg))
+                        return Error(resp.ReturnMsg);
+                    return Error($"{resp.ErrCode},{resp.ErrCodeDes}");
                 }
 
                 if (resp.TradeState != "SUCCESS")

@@ -9,10 +9,12 @@ using Spear.Core;
 using Spear.Core.Dependency;
 using Spear.Core.Extensions;
 using Spear.Core.Serialize;
+using Spear.Core.Timing;
 using Spear.Gateway.Payment.Filters;
 using Spear.Gateway.Payment.Payment;
 using Spear.Gateway.Payment.ViewModels;
 using Spear.Payment.Contracts;
+using Spear.Payment.Contracts.Dtos;
 using Spear.Payment.Contracts.Enums;
 using System;
 using System.Threading.Tasks;
@@ -24,12 +26,30 @@ namespace Spear.Gateway.Payment.Controllers
     public class WechatController : PaymentController<WechatpayGateway>
     {
         private readonly ILogger _logger;
-        private readonly ITradeContract _tradeContract;
 
-        public WechatController(ITradeContract tradeContract) : base(PaymentMode.Wechat)
+        public WechatController() : base(PaymentMode.Wechat)
         {
-            _tradeContract = tradeContract;
             _logger = CurrentIocManager.CreateLogger<WechatController>();
+        }
+
+        private T ParsePayModel<T>(TradeDto dto, VPaymentInput input)
+            where T : BasePayModel, new()
+        {
+            var model = new T
+            {
+                OutTradeNo = dto.TradeNo,
+                TotalAmount = input.Amount,
+                Body = dto.Title
+            };
+            if (!string.IsNullOrWhiteSpace(dto.Extend))
+            {
+                model.Attach = dto.Extend;
+            }
+            if (input.Timeout.HasValue && input.Timeout > 0)
+            {
+                model.TimeExpire = Clock.Now.AddSeconds(input.Timeout.Value).ToString("yyyyMMddHHmmss");
+            }
+            return model;
         }
 
         /// <summary> 公众号支付 </summary>
@@ -40,13 +60,9 @@ namespace Spear.Gateway.Payment.Controllers
         {
             var dto = await CreateTrade(PaymentType.Public, input);
             var request = new PublicPayRequest();
-            request.AddGatewayData(new PublicPayModel
-            {
-                OutTradeNo = dto.TradeNo,
-                TotalAmount = input.Amount,
-                Body = dto.Title,
-                OpenId = input.OpenId
-            });
+            var model = ParsePayModel<PublicPayModel>(dto, input);
+            model.OpenId = input.OpenId;
+            request.AddGatewayData(model);
             request.ReturnUrl = input.RedirectUrl;
             var response = Gateway(PaymentType.Public).Execute(request);
             _logger.LogDebug(JsonHelper.ToJson(response));
@@ -71,12 +87,8 @@ namespace Spear.Gateway.Payment.Controllers
                 // 验收Case 必须为2.01
                 input.Amount = 201;
             }
-            request.AddGatewayData(new AppPayModel
-            {
-                OutTradeNo = dto.TradeNo,
-                TotalAmount = input.Amount,
-                Body = dto.Title
-            });
+            var payModel = ParsePayModel<AppPayModel>(dto, input);
+            request.AddGatewayData(payModel);
             var response = gateway.Execute(request);
             _logger.LogDebug(JsonHelper.ToJson(response));
             if (response.ReturnCode == "FAIL")
@@ -94,13 +106,10 @@ namespace Spear.Gateway.Payment.Controllers
         {
             var dto = await CreateTrade(PaymentType.Applet, input);
             var request = new AppletPayRequest();
-            request.AddGatewayData(new AppletPayModel
-            {
-                OutTradeNo = dto.TradeNo,
-                TotalAmount = input.Amount,
-                Body = dto.Title,
-                OpenId = input.OpenId
-            });
+
+            var model = ParsePayModel<AppletPayModel>(dto, input);
+            model.OpenId = input.OpenId;
+            request.AddGatewayData(model);
 
             var response = Gateway(PaymentType.Applet).Execute(request);
             _logger.LogDebug(JsonHelper.ToJson(response));
@@ -121,14 +130,10 @@ namespace Spear.Gateway.Payment.Controllers
             var request = new WapPayRequest();
             var clientIp = Current.RemoteIp();
             _logger.LogDebug($"[h5]client-ip:{clientIp}");
-            request.AddGatewayData(new WapPayModel
-            {
-                OutTradeNo = dto.TradeNo,
-                TotalAmount = input.Amount,
-                Body = dto.Title,
-                SceneInfo = input.SceneInfo,
-                SpbillCreateIp = clientIp
-            });
+            var model = ParsePayModel<WapPayModel>(dto, input);
+            model.SceneInfo = input.SceneInfo;
+            model.SpbillCreateIp = clientIp;
+            request.AddGatewayData(model);
             request.ReturnUrl = input.RedirectUrl;
             var response = Gateway(PaymentType.H5).Execute(request);
             if (response.ReturnCode == "FAIL")
@@ -156,13 +161,8 @@ namespace Spear.Gateway.Payment.Controllers
             const PaymentType type = PaymentType.Scan;
             var dto = await CreateTrade(type, input);
             var request = new ScanPayRequest();
-            request.AddGatewayData(new ScanPayModel
-            {
-                OutTradeNo = dto.TradeNo,
-                TotalAmount = input.Amount,
-                Body = dto.Title
-            });
-
+            var model = ParsePayModel<ScanPayModel>(dto, input);
+            request.AddGatewayData(model);
             var response = Gateway(PaymentType.Scan).Execute(request);
             if (response.ReturnCode == "FAIL")
                 return Error<string>(response.ReturnMsg);
@@ -179,13 +179,9 @@ namespace Spear.Gateway.Payment.Controllers
         {
             var dto = await CreateTrade(PaymentType.Barcode, input);
             var request = new BarcodePayRequest();
-            request.AddGatewayData(new BarcodePayModel
-            {
-                OutTradeNo = dto.TradeNo,
-                TotalAmount = input.Amount,
-                Body = dto.Title,
-                AuthCode = input.AuthCode
-            });
+            var model = ParsePayModel<BarcodePayModel>(dto, input);
+            model.AuthCode = input.AuthCode;
+            request.AddGatewayData(model);
             request.PaySucceed += BarcodePay_PaySucceed;
             request.PayFailed += BarcodePay_PayFaild;
 
