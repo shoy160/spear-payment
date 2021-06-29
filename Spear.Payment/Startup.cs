@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 using NSwag.AspNetCore;
@@ -10,6 +11,8 @@ using Spear.Core;
 using Spear.Core.Data;
 using Spear.Core.EventBus;
 using Spear.Core.Exceptions;
+using Spear.Core.Message;
+using Spear.Core.Message.Json;
 using Spear.Framework;
 using Spear.RabbitMq;
 using Spear.WebApi;
@@ -45,8 +48,8 @@ namespace Spear.Gateway.Payment
 
         protected override void MapServices(IServiceCollection services)
         {
-            //services.AddMonitor(monitorTypes: typeof(PaymentMonitor));
-            DbConnectionManager.AddAdapter(new Spear.Dapper.Mysql.MySqlConnectionAdapter());
+            DbConnectionManager.AddAdapter(new Dapper.Mysql.MySqlConnectionAdapter());
+            services.TryAddSingleton<IMessageSerializer, JsonMessageSerializer>();
             services.AddRabbitMqEventBus();
             base.MapServices(services);
         }

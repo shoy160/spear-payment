@@ -215,6 +215,7 @@ namespace Spear.Gateway.Payment.Areas.Manage.Controllers
                 {
                     OutTradeNo = tradeNo,
                     OutRefundNo = refundDto.RefundNo,
+                    TotalAmount = (int)trade.Amount,
                     RefundAmount = (int)amount,
                     RefundDesc = reason
                 });

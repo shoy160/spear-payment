@@ -46,7 +46,11 @@ namespace Spear.Gateway.Payment.ViewModels
             }
 
             CurrentIocManager.Context.SetProject(project);
-            if (string.IsNullOrWhiteSpace(project.Secret) || Core.Constants.Mode == Core.ProductMode.Dev)
+            var mode = "SPEAR_MODE".Env<Core.ProductMode?>();
+            if (!mode.HasValue)
+                mode = "mode".Config(Core.ProductMode.Dev);
+
+            if (string.IsNullOrWhiteSpace(project.Secret) || mode == Core.ProductMode.Dev)
                 return results;
             if (Sign.Length != 45)
             {
