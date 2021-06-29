@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
+using NSwag.AspNetCore;
 using PaySharp.Core;
 using Spear.Core;
 using Spear.Core.Data;
@@ -15,6 +16,7 @@ using Spear.WebApi;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 
@@ -33,6 +35,12 @@ namespace Spear.Gateway.Payment
                 {"help", "支付网关接口文档"},
                 {"manage", "支付网关接口文档（后台管理）"}
             };
+        }
+
+        protected override void SwaggerUiSetting(SwaggerUiSettings setting)
+        {
+            setting.CustomJavaScriptPath = "/swagger/payment/swagger.js";
+            setting.CustomStylesheetPath = "/swagger/payment/swagger.css";
         }
 
         protected override void MapServices(IServiceCollection services)
@@ -69,6 +77,11 @@ namespace Spear.Gateway.Payment
                 FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot")),
                 EnableDefaultFiles = true,
                 DefaultFilesOptions = { DefaultFileNames = new[] { "index.html" } }
+            });
+            app.UseFileServer(new FileServerOptions
+            {
+                RequestPath = new PathString("/swagger/payment"),
+                FileProvider = new EmbeddedFileProvider(typeof(Startup).GetTypeInfo().Assembly, "Spear.Payment.Content")
             });
             app.UseMiddleware<CoreVersionMiddleWare>();
             app.UsePaySharp();

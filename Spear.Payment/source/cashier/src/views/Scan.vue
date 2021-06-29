@@ -52,7 +52,7 @@ export default {
       wechat: false,
       detailId: '',
       code: '',
-      logo: '/static/icb.png',
+      logo: '/static/logo.png',
       payLogo: '/static/pay_logo.png',
       timg: '/static/timg.gif',
       redpack: '/static/alipay_redpack.png',

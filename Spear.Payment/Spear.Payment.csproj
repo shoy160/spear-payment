@@ -28,6 +28,16 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="Content\swagger.css" />
+    <None Remove="Content\swagger.js" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Content\swagger.css" />
+    <EmbeddedResource Include="Content\swagger.js" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Folder Include="wwwroot\" />
   </ItemGroup>
 
@@ -43,6 +53,13 @@
     <ProjectReference Include="..\PaySharp\PaySharp.Alipay\PaySharp.Alipay.csproj" />
     <ProjectReference Include="..\PaySharp\PaySharp.Core\PaySharp.Core.csproj" />
     <ProjectReference Include="..\PaySharp\PaySharp.Wechatpay\PaySharp.Wechatpay.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Update="wwwroot\manage\favicon.ico">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>
