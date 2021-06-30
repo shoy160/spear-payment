@@ -14,6 +14,7 @@ using Spear.Core.Exceptions;
 using Spear.Core.Message;
 using Spear.Core.Message.Json;
 using Spear.Framework;
+using Spear.Gateway.Payment.Payment;
 using Spear.RabbitMq;
 using Spear.WebApi;
 using System;
@@ -56,7 +57,7 @@ namespace Spear.Gateway.Payment
 
         protected override void UseServices(IServiceProvider provider)
         {
-            if (Constants.Mode != ProductMode.Dev)
+            if (PaymentExtensions.Mode != ProductMode.Dev)
                 provider.SubscribeAt();
             base.UseServices(provider);
         }

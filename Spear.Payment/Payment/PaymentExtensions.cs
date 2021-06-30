@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using PaySharp.Alipay;
 using PaySharp.Core;
 using PaySharp.Wechatpay;
+using Spear.Core;
 using Spear.Core.Dependency;
 using Spear.Core.EventBus;
 using Spear.Core.Exceptions;
@@ -26,6 +27,17 @@ namespace Spear.Gateway.Payment.Payment
     {
         private const string DefaultIp = "127.0.0.1";
         private static readonly ILogger Logger = CurrentIocManager.CreateLogger(typeof(PaymentExtensions));
+
+        public static ProductMode Mode
+        {
+            get
+            {
+                var mode = "SPEAR_MODE".Env<ProductMode?>();
+                if (!mode.HasValue)
+                    mode = "mode".Config(ProductMode.Dev);
+                return mode.Value;
+            }
+        }
 
         /// <summary> 客户端IP </summary>
         public static string RemoteIp(this HttpContext httpContext)

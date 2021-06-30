@@ -81,7 +81,7 @@ namespace Spear.Payment.Tests
             //var path = "D:\\Docs\\海南环岛\\文档\\certificate\\apiclient_cert.p12";
             ServicePointManager.ServerCertificateValidationCallback = new RemoteCertificateValidationCallback(CheckValidationResult);
             //var cert = new X509Certificate2(path, "1377779702");
-            var path = "F:\\apiclient_cert.p12";
+            var path = "F:\\Docs\\csly\\1609850421_20210630_cert\\apiclient_cert.p12";
             var buffer = File.ReadAllBytes(path);
             var base64 = Convert.ToBase64String(buffer);
             Console.WriteLine(base64);

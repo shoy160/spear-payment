@@ -3,13 +3,14 @@ using Spear.Core.EventBus;
 using Spear.Gateway.Payment.Payment;
 using Spear.Payment.Contracts;
 using Spear.Payment.Contracts.Dtos;
+using Spear.RabbitMq;
 using System.Threading.Tasks;
 
 namespace Spear.Gateway.Payment.EventHandler
 {
     /// <inheritdoc />
     /// <summary> 支付回调通知 </summary>
-    //[Subscription("payment_notify")]
+    [Subscription("payment_notify")]
     public class PaymentNotifyEventHandler : IEventHandler<TradeDto>
     {
         /// <inheritdoc />

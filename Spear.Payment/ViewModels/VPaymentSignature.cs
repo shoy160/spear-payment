@@ -5,6 +5,7 @@ using Spear.Core.Domain;
 using Spear.Core.Extensions;
 using Spear.Core.Serialize;
 using Spear.Core.Timing;
+using Spear.Gateway.Payment.Payment;
 using Spear.Payment.Contracts;
 using System;
 using System.Collections.Generic;
@@ -46,9 +47,7 @@ namespace Spear.Gateway.Payment.ViewModels
             }
 
             CurrentIocManager.Context.SetProject(project);
-            var mode = "SPEAR_MODE".Env<Core.ProductMode?>();
-            if (!mode.HasValue)
-                mode = "mode".Config(Core.ProductMode.Dev);
+            var mode = PaymentExtensions.Mode;
 
             if (string.IsNullOrWhiteSpace(project.Secret) || mode == Core.ProductMode.Dev)
                 return results;
