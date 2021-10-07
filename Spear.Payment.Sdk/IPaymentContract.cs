@@ -1,9 +1,9 @@
 ﻿using System.Threading.Tasks;
-using Spear.Sdk.Payment.Enums;
-using Spear.Sdk.Payment.Models;
-using Spear.SdkCore;
+using Spear.Payment.Sdk.Enums;
+using Spear.Payment.Sdk.Models;
+using Spear.Sdk.Core.Dtos;
 
-namespace Spear.Sdk.Payment
+namespace Spear.Payment.Sdk
 {
     public interface IPaymentContract
     {

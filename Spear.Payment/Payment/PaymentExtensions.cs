@@ -1,8 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
-using PaySharp.Alipay;
-using PaySharp.Core;
-using PaySharp.Wechatpay;
 using Spear.Core;
 using Spear.Core.Dependency;
 using Spear.Core.EventBus;
@@ -13,15 +10,21 @@ using Spear.Core.Helper.Http;
 using Spear.Core.Serialize;
 using Spear.Core.Timing;
 using Spear.Gateway.Payment.ViewModels;
+using Spear.Payment.Alipay;
+using Spear.Payment.Alipay.Domain;
+using Spear.Payment.Alipay.Request;
 using Spear.Payment.Contracts;
 using Spear.Payment.Contracts.Dtos;
 using Spear.Payment.Contracts.Enums;
+using Spear.Payment.Core.Gateways;
+using Spear.Payment.Wechat;
 using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
+using Merchant = Spear.Payment.Alipay.Merchant;
 
-namespace Spear.Gateway.Payment.Payment
+namespace Spear.Payment.Payment
 {
     internal static class PaymentExtensions
     {
@@ -97,12 +100,12 @@ namespace Spear.Gateway.Payment.Payment
                 {
                     case PaymentMode.Alipay:
                         var alipayMerchant =
-                            JsonHelper.Json<PaySharp.Alipay.Merchant>(config.ToString());
+                            JsonHelper.Json<Merchant>(config.ToString());
                         return new AlipayGateway(alipayMerchant);
                     case PaymentMode.Wechat:
                         var wechatpayMerchant =
-                            JsonHelper.Json<PaySharp.Wechatpay.Merchant>(config.ToString());
-                        return new WechatpayGateway(wechatpayMerchant);
+                            JsonHelper.Json<Spear.Payment.Wechat.Merchant>(config.ToString());
+                        return new WechatGateway(wechatpayMerchant);
                 }
             }
             catch (Exception ex)
@@ -112,7 +115,7 @@ namespace Spear.Gateway.Payment.Payment
             return null;
         }
 
-        private static void Check(this PaySharp.Wechatpay.Response.BaseResponse resp)
+        private static void Check(this Spear.Payment.Wechat.Response.BaseResponse resp)
         {
             if (resp.ReturnCode == "FAIL")
                 throw new BusiException(resp.ReturnMsg);
@@ -120,7 +123,7 @@ namespace Spear.Gateway.Payment.Payment
                 throw new BusiException(resp.ErrCodeDes);
         }
 
-        private static void Check(this PaySharp.Alipay.Response.BaseResponse resp)
+        private static void Check(this Spear.Payment.Alipay.Response.BaseResponse resp)
         {
             if (resp.Code != "10000")
                 throw new BusiException($"{resp.SubCode}:{resp.SubMessage}");
@@ -142,8 +145,8 @@ namespace Spear.Gateway.Payment.Payment
                     switch (type)
                     {
                         case PaymentType.App:
-                            var appPayRequest = new PaySharp.Alipay.Request.AppPayRequest();
-                            appPayRequest.AddGatewayData(new PaySharp.Alipay.Domain.AppPayModel
+                            var appPayRequest = new AppPayRequest();
+                            appPayRequest.AddGatewayData(new AppPayModel
                             {
                                 OutTradeNo = trade.TradeNo,
                                 TotalAmount = trade.Amount / 100D,
@@ -154,8 +157,8 @@ namespace Spear.Gateway.Payment.Payment
                             var appPayResponse = gateway.Execute(appPayRequest);
                             return appPayResponse.OrderInfo;
                         case PaymentType.H5:
-                            var request = new PaySharp.Alipay.Request.WapPayRequest();
-                            request.AddGatewayData(new PaySharp.Alipay.Domain.WapPayModel
+                            var request = new WapPayRequest();
+                            request.AddGatewayData(new WapPayModel
                             {
                                 OutTradeNo = trade.TradeNo,
                                 TotalAmount = trade.Amount / 100D,
@@ -167,8 +170,8 @@ namespace Spear.Gateway.Payment.Payment
                             var response = gateway.Execute(request);
                             return response.Url;
                         case PaymentType.Scan:
-                            var scanPayRequest = new PaySharp.Alipay.Request.ScanPayRequest();
-                            scanPayRequest.AddGatewayData(new PaySharp.Alipay.Domain.ScanPayModel
+                            var scanPayRequest = new Spear.Payment.Alipay.Request.ScanPayRequest();
+                            scanPayRequest.AddGatewayData(new ScanPayModel
                             {
                                 OutTradeNo = trade.TradeNo,
                                 TotalAmount = trade.Amount / 100D,
@@ -186,8 +189,8 @@ namespace Spear.Gateway.Payment.Payment
                     switch (type)
                     {
                         case PaymentType.Public:
-                            var publicPayRequest = new PaySharp.Wechatpay.Request.PublicPayRequest();
-                            publicPayRequest.AddGatewayData(new PaySharp.Wechatpay.Domain.PublicPayModel
+                            var publicPayRequest = new Spear.Payment.Wechat.Request.PublicPayRequest();
+                            publicPayRequest.AddGatewayData(new Spear.Payment.Wechat.Domain.PublicPayModel
                             {
                                 OutTradeNo = trade.TradeNo,
                                 TotalAmount = (int)trade.Amount,
@@ -199,11 +202,11 @@ namespace Spear.Gateway.Payment.Payment
                             publicPayResponse.Check();
                             return publicPayResponse.OrderInfo;
                         case PaymentType.H5:
-                            var request = new PaySharp.Wechatpay.Request.WapPayRequest();
+                            var request = new Spear.Payment.Wechat.Request.WapPayRequest();
                             var clientIp = CurrentIocManager.ContextWrap.RemoteIpAddress;
                             Logger.LogInformation($"[h5]client-ip:{clientIp}");
                             var sceneInfo = new SceneInfo(trade.Title, trade.RedirectUrl);
-                            request.AddGatewayData(new PaySharp.Wechatpay.Domain.WapPayModel
+                            request.AddGatewayData(new Spear.Payment.Wechat.Domain.WapPayModel
                             {
                                 OutTradeNo = trade.TradeNo,
                                 TotalAmount = (int)trade.Amount,
@@ -219,8 +222,8 @@ namespace Spear.Gateway.Payment.Payment
                                 url = CurrentIocManager.Context.SetQuery("redirect_url", trade.RedirectUrl, url);
                             return url;
                         case PaymentType.Scan:
-                            var scanPayRequest = new PaySharp.Wechatpay.Request.ScanPayRequest();
-                            scanPayRequest.AddGatewayData(new PaySharp.Wechatpay.Domain.ScanPayModel
+                            var scanPayRequest = new Spear.Payment.Wechat.Request.ScanPayRequest();
+                            scanPayRequest.AddGatewayData(new Spear.Payment.Wechat.Domain.ScanPayModel
                             {
                                 OutTradeNo = trade.TradeNo,
                                 TotalAmount = (int)trade.Amount,

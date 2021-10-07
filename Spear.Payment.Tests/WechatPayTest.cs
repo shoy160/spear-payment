@@ -1,13 +1,13 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using PaySharp.Wechatpay;
-using PaySharp.Wechatpay.Request;
+using Spear.Payment.Wechat;
+using Spear.Payment.Wechat.Request;
 
 namespace Spear.Payment.Tests
 {
     [TestClass]
     public class WechatPayTest : DTest
     {
-        private WechatpayGateway gateway;
+        private readonly WechatGateway _gateway;
 
         public WechatPayTest()
         {
@@ -19,14 +19,14 @@ namespace Spear.Payment.Tests
                 Key = "PlbYvz59xfDBdEzkg5DLX5yDgI7oor6V",
                 NotifyUrl = "http://iapp.i-cbao.com/notify/payment"
             };
-            gateway = new WechatpayGateway(merchant);
+            _gateway = new WechatGateway(merchant);
         }
 
         [TestMethod]
         public void SandboxTest()
         {
-            SandboxKeyRequest request = new SandboxKeyRequest();
-            var response = gateway.Execute(request);
+            var request = new SandboxKeyRequest();
+            var response = _gateway.Execute(request);
             Print(response);
         }
     }

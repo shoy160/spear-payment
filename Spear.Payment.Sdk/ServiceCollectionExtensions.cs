@@ -1,21 +1,23 @@
 ﻿#if NETSTANDARD2_0
-using System;
-using System.Threading.Tasks;
-using Spear.Sdk.Payment.Services;
-using Spear.SdkCore;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Spear.Payment.Sdk.Services;
+using Spear.Sdk.Core.Dtos;
+using System;
+using System.Threading.Tasks;
 
-namespace Spear.Sdk.Payment
+namespace Spear.Payment.Sdk
 {
+    /// <summary> 扩展方法 </summary>
     public static class ServiceCollectionExtensions
     {
         /// <summary> 添加支付模块 </summary>
         /// <param name="services"></param>
         /// <param name="optionsAction"></param>
+        /// <param name="errorAction"></param>
         /// <returns></returns>
-        public static IServiceCollection AddPayment(this IServiceCollection services,
+        public static IServiceCollection AddPaymentSdk(this IServiceCollection services,
             Action<PaymentOptions> optionsAction = null, Func<SdkRequestData, Task> errorAction = null)
         {
             services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();

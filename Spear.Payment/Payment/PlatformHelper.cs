@@ -1,7 +1,7 @@
-﻿using Spear.Core.Extensions;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using Spear.Core.Extensions;
 
-namespace Spear.Gateway.Payment.Payment
+namespace Spear.Payment.Payment
 {
     internal static class PlatformHelper
     {

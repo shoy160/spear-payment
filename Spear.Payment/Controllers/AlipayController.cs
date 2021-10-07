@@ -1,18 +1,17 @@
-﻿using Spear.Core;
-using Spear.Gateway.Payment.ViewModels;
-using Spear.Payment.Contracts;
-using Spear.Payment.Contracts.Enums;
-using Microsoft.AspNetCore.Mvc;
-using PaySharp.Alipay;
-using PaySharp.Alipay.Domain;
-using PaySharp.Alipay.Request;
-using PaySharp.Core.Response;
-using System.Threading.Tasks;
+﻿using Microsoft.AspNetCore.Mvc;
+using Spear.Core;
 using Spear.Core.Extensions;
 using Spear.Core.Timing;
+using Spear.Gateway.Payment.ViewModels;
+using Spear.Payment.Alipay;
+using Spear.Payment.Alipay.Domain;
+using Spear.Payment.Alipay.Request;
 using Spear.Payment.Contracts.Dtos;
+using Spear.Payment.Contracts.Enums;
+using Spear.Payment.Core.Response;
+using System.Threading.Tasks;
 
-namespace Spear.Gateway.Payment.Controllers
+namespace Spear.Payment.Controllers
 {
     /// <summary> 支付宝支付 </summary>
     [Route("alipay")]

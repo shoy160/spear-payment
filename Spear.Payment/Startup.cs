@@ -6,7 +6,6 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 using NSwag.AspNetCore;
-using PaySharp.Core;
 using Spear.Core;
 using Spear.Core.Data;
 using Spear.Core.EventBus;
@@ -14,7 +13,8 @@ using Spear.Core.Exceptions;
 using Spear.Core.Message;
 using Spear.Core.Message.Json;
 using Spear.Framework;
-using Spear.Gateway.Payment.Payment;
+using Spear.Payment.Core;
+using Spear.Payment.Payment;
 using Spear.RabbitMq;
 using Spear.WebApi;
 using System;
@@ -24,7 +24,7 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 
-namespace Spear.Gateway.Payment
+namespace Spear.Payment
 {
     public class Startup : DStartup
     {
@@ -88,7 +88,7 @@ namespace Spear.Gateway.Payment
                 FileProvider = new EmbeddedFileProvider(typeof(Startup).GetTypeInfo().Assembly, "Spear.Payment.Content")
             });
             app.UseMiddleware<CoreVersionMiddleWare>();
-            app.UsePaySharp();
+            app.UsePayment();
             //app.UseStaticFiles();
             app.UseCors(builder => builder.SetIsOriginAllowed(t => true).AllowAnyHeader().AllowAnyMethod());
             base.Configure(app, env);

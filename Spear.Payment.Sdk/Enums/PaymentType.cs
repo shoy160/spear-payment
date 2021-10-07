@@ -1,4 +1,4 @@
-﻿namespace Spear.Sdk.Payment.Enums
+﻿namespace Spear.Payment.Sdk.Enums
 {
     public enum PaymentType
     {

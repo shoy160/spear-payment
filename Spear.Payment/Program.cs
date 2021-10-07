@@ -1,7 +1,7 @@
-﻿using Spear.WebApi;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
+using Spear.WebApi;
 
-namespace Spear.Gateway.Payment
+namespace Spear.Payment
 {
     public class Program : DHost<Startup>
     {

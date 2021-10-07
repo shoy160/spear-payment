@@ -2,16 +2,16 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
-using Spear.Sdk.Payment.Enums;
-using Spear.Sdk.Payment.Models;
-using Spear.SdkCore;
 using Newtonsoft.Json;
-
+using Spear.Payment.Sdk.Enums;
+using Spear.Payment.Sdk.Models;
+using Spear.Sdk.Core;
+using Spear.Sdk.Core.Dtos;
 #if NETSTANDARD2_0
 using Microsoft.AspNetCore.Http;
 #endif
 
-namespace Spear.Sdk.Payment.Services
+namespace Spear.Payment.Sdk.Services
 {
     public class PaymentService : SdkService, IPaymentContract
     {

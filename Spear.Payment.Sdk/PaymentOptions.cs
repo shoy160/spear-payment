@@ -1,6 +1,6 @@
-﻿using Spear.SdkCore;
+﻿using Spear.Sdk.Core;
 
-namespace Spear.Sdk.Payment
+namespace Spear.Payment.Sdk
 {
     /// <summary> 支付配置 </summary>
     public class PaymentOptions : ISdkConfig
