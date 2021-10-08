@@ -20,13 +20,13 @@ namespace Spear.Payment.Alipay
 
         public static IGateways UseAlipay(this IGateways gateways, IConfiguration configuration)
         {
-            var merchants = configuration.GetSection("PaySharp:Alipays").Get<Merchant[]>();
+            var merchants = configuration.GetSection("Payment:Alipays").Get<Merchant[]>();
             if (merchants != null)
             {
                 for (int i = 0; i < merchants.Length; i++)
                 {
                     var alipayGateway = new AlipayGateway(merchants[i]);
-                    var gatewayUrl = configuration.GetSection($"PaySharp:Alipays:{i}:GatewayUrl").Value;
+                    var gatewayUrl = configuration.GetSection($"Payment:Alipays:{i}:GatewayUrl").Value;
                     if (!string.IsNullOrEmpty(gatewayUrl))
                     {
                         alipayGateway.GatewayUrl = gatewayUrl;

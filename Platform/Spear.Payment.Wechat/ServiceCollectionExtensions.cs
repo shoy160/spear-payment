@@ -6,7 +6,7 @@ namespace Spear.Payment.Wechat
 {
     public static class ServiceCollectionExtensions
     {
-        public static IGateways UseWechatpay(this IGateways gateways, Action<Merchant> action)
+        public static IGateways UseWechat(this IGateways gateways, Action<Merchant> action)
         {
             if (action != null)
             {
@@ -18,15 +18,15 @@ namespace Spear.Payment.Wechat
             return gateways;
         }
 
-        public static IGateways UseWechatpay(this IGateways gateways, IConfiguration configuration)
+        public static IGateways UseWechat(this IGateways gateways, IConfiguration configuration)
         {
-            var merchants = configuration.GetSection("PaySharp:Wechatpays").Get<Merchant[]>();
+            var merchants = configuration.GetSection("Payment:Wechatpays").Get<Merchant[]>();
             if (merchants != null)
             {
                 for (int i = 0; i < merchants.Length; i++)
                 {
                     var wechatpayGateway = new WechatGateway(merchants[i]);
-                    var gatewayUrl = configuration.GetSection($"PaySharp:Wechatpays:{i}:GatewayUrl").Value;
+                    var gatewayUrl = configuration.GetSection($"Payment:Wechatpays:{i}:GatewayUrl").Value;
                     if (!string.IsNullOrEmpty(gatewayUrl))
                     {
                         wechatpayGateway.GatewayUrl = gatewayUrl;

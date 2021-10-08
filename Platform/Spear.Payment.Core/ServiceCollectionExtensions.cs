@@ -9,9 +9,7 @@ namespace Spear.Payment.Core
 {
     public static class ServiceCollectionExtensions
     {
-        /// <summary>
-        /// 添加PaySharp
-        /// </summary>
+        /// <summary> 添加Payment </summary>
         /// <param name="services"></param>
         /// <param name="setupAction"></param>
         public static void AddPayment(this IServiceCollection services, Action<IGateways> setupAction)
@@ -27,9 +25,7 @@ namespace Spear.Payment.Core
             });
         }
 
-        /// <summary>
-        /// 使用PaySharp
-        /// </summary>
+        /// <summary> 使用Payment </summary>
         /// <param name="app"></param>
         /// <returns></returns>
         public static IApplicationBuilder UsePayment(this IApplicationBuilder app)
