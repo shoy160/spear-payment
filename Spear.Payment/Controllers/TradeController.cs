@@ -66,6 +66,25 @@ namespace Spear.Gateway.Payment.Controllers
             return Succ(model);
         }
 
+        /// <summary> 交易查询 </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        [HttpGet("query")]
+        public async Task<DResult<VTrade>> Query(VQueryInput input)
+        {
+            var detail = await _tradeContract.DetailAsync(input.ProjectCode, input.OrderNo);
+            if (detail == null)
+                throw new BusiException("交易不存在");
+            var model = detail.MapTo<VTrade>();
+            if (string.IsNullOrWhiteSpace(model.RedirectUrl))
+            {
+                var project = await _projectContract.DetailByIdAsync(detail.ProjectId);
+                model.RedirectUrl = project.RedirectUrl;
+            }
+
+            return Succ(model);
+        }
+
         /// <summary> 交易支付 </summary>
         /// <param name="id"></param>
         /// <param name="input"></param>
@@ -78,8 +97,10 @@ namespace Spear.Gateway.Payment.Controllers
                 return Error("支付状态异常");
             var channels = await _projectContract.ChannelsAsync(trade.ProjectId);
             if (!channels.ContainsKey(input.Mode))
-                return Error("未开通的支付方式");
+                return Error($"未开通支付方式[{input.Mode.GetText()}]");
             var channel = Channel(input.Mode, input.Type, channels);
+            if(channel == null)
+                return Error($"支付途径[{input.Type.GetText()}]未开通");
             var gateway = input.Mode.CreateGateway(channel.Config);
             if (gateway == null)
                 return Error("支付渠道配置异常");

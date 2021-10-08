@@ -31,5 +31,16 @@ namespace Spear.Gateway.Payment.ViewModels
         public string RedirectUrl { get; set; }
         /// <summary> 平台ID </summary>
         public string PlatformId { get; set; }
+        /// <summary> 支付用户 </summary>
+        public string PaidUser { get; set; }
+
+        /// <summary> 支付帐号 </summary>
+        public string PaidAccount { get; set; }
+
+        /// <summary> 第三方支付交易号 </summary>
+        public string OutTradeNo { get; set; }
+
+        /// <summary> 支付时间 </summary>
+        public DateTime? PaidTime { get; set; }
     }
 }
