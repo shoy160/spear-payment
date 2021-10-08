@@ -1,13 +1,14 @@
-﻿using Spear.Core.Exceptions;
-using Spear.Gateway.Payment.Payment;
+﻿using System.Threading.Tasks;
+using Spear.Core.Exceptions;
+using Spear.Gateway.Payment.Controllers;
 using Spear.Gateway.Payment.ViewModels;
 using Spear.Payment.Contracts;
 using Spear.Payment.Contracts.Dtos;
 using Spear.Payment.Contracts.Enums;
-using PaySharp.Core;
-using System.Threading.Tasks;
+using Spear.Payment.Core.Gateways;
+using Spear.Payment.Payment;
 
-namespace Spear.Gateway.Payment.Controllers
+namespace Spear.Payment.Controllers
 {
     /// <summary> 支付基类 </summary>
     /// <typeparam name="T"></typeparam>

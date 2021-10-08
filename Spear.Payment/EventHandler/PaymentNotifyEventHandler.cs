@@ -1,10 +1,10 @@
 ﻿using Spear.Core.Dependency;
 using Spear.Core.EventBus;
-using Spear.Gateway.Payment.Payment;
 using Spear.Payment.Contracts;
 using Spear.Payment.Contracts.Dtos;
 using Spear.RabbitMq;
 using System.Threading.Tasks;
+using Spear.Payment.Payment;
 
 namespace Spear.Gateway.Payment.EventHandler
 {

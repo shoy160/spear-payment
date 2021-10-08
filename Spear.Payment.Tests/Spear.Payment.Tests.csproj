@@ -25,11 +25,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Platform\Spear.Payment.Wechat\Spear.Payment.Wechat.csproj" />
     <ProjectReference Include="..\Spear.Payment.Business\Spear.Payment.Business.csproj" />
     <ProjectReference Include="..\Spear.Payment.Contracts\Spear.Payment.Contracts.csproj" />
-    <ProjectReference Include="..\PaySharp\PaySharp.Alipay\PaySharp.Alipay.csproj" />
-    <ProjectReference Include="..\PaySharp\PaySharp.Core\PaySharp.Core.csproj" />
-    <ProjectReference Include="..\PaySharp\PaySharp.Wechatpay\PaySharp.Wechatpay.csproj" />
   </ItemGroup>
 
 </Project>

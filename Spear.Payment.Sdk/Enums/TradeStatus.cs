@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 
-namespace Spear.Sdk.Payment.Enums
+namespace Spear.Payment.Sdk.Enums
 {
     /// <summary> 交易状态 </summary>
     public enum TradeStatus : byte

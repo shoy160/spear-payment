@@ -1,29 +1,29 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using PaySharp.Core;
-using PaySharp.Core.Response;
-using PaySharp.Wechatpay;
-using PaySharp.Wechatpay.Domain;
-using PaySharp.Wechatpay.Request;
 using Spear.Core;
 using Spear.Core.Dependency;
 using Spear.Core.Extensions;
 using Spear.Core.Serialize;
 using Spear.Core.Timing;
+using Spear.Gateway.Payment.Controllers;
 using Spear.Gateway.Payment.Filters;
-using Spear.Gateway.Payment.Payment;
 using Spear.Gateway.Payment.ViewModels;
-using Spear.Payment.Contracts;
 using Spear.Payment.Contracts.Dtos;
 using Spear.Payment.Contracts.Enums;
+using Spear.Payment.Core.Gateways;
+using Spear.Payment.Core.Response;
+using Spear.Payment.Payment;
+using Spear.Payment.Wechat;
+using Spear.Payment.Wechat.Domain;
+using Spear.Payment.Wechat.Request;
 using System;
 using System.Threading.Tasks;
 
-namespace Spear.Gateway.Payment.Controllers
+namespace Spear.Payment.Controllers
 {
     /// <summary> 微信支付 </summary>
     [Route("wechat"), Project]
-    public class WechatController : PaymentController<WechatpayGateway>
+    public class WechatController : PaymentController<WechatGateway>
     {
         private readonly ILogger _logger;
 
@@ -82,7 +82,7 @@ namespace Spear.Gateway.Payment.Controllers
             var dto = await CreateTrade(PaymentType.App, input);
             var request = new AppPayRequest();
             IGateway gateway = Gateway(PaymentType.App);
-            if (gateway is WechatpayGateway wc && wc.Merchant.IsTest)
+            if (gateway is WechatGateway wc && wc.Merchant.IsTest)
             {
                 // 验收Case 必须为2.01
                 input.Amount = 201;

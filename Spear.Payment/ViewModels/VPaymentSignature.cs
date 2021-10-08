@@ -5,13 +5,13 @@ using Spear.Core.Domain;
 using Spear.Core.Extensions;
 using Spear.Core.Serialize;
 using Spear.Core.Timing;
-using Spear.Gateway.Payment.Payment;
 using Spear.Payment.Contracts;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Reflection;
+using Spear.Payment.Payment;
 
 namespace Spear.Gateway.Payment.ViewModels
 {

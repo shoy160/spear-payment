@@ -1,22 +1,22 @@
-﻿using Spear.Core;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Spear.Core.Dependency;
-using Spear.Core.EventBus;
-using Spear.Gateway.Payment.Payment;
+using Spear.Core.Extensions;
+using Spear.Gateway.Payment.Controllers;
+using Spear.Payment.Alipay;
 using Spear.Payment.Contracts;
 using Spear.Payment.Contracts.Dtos;
 using Spear.Payment.Contracts.Enums;
-using Microsoft.AspNetCore.Mvc;
-using PaySharp.Core;
-using PaySharp.Core.Events;
-using PaySharp.Core.Exceptions;
-using PaySharp.Core.Notify;
+using Spear.Payment.Core.Events;
+using Spear.Payment.Core.Exceptions;
+using Spear.Payment.Core.Gateways;
+using Spear.Payment.Core.Notify;
+using Spear.Payment.Payment;
 using System;
 using System.Threading.Tasks;
-using Spear.Core.Extensions;
-using NotifyType = PaySharp.Core.Notify.NotifyType;
-using Microsoft.Extensions.Logging;
+using NotifyType = Spear.Payment.Core.Notify.NotifyType;
 
-namespace Spear.Gateway.Payment.Controllers
+namespace Spear.Payment.Controllers
 {
     /// <summary> 支付回调 </summary>
     [Route("notify"), ApiExplorerSettings(IgnoreApi = true)]
@@ -97,9 +97,9 @@ namespace Spear.Gateway.Payment.Controllers
              */
 
             var inputDto = new TradePaidInputDto();
-            if (e.GatewayType == typeof(PaySharp.Alipay.AlipayGateway))
+            if (e.GatewayType == typeof(AlipayGateway))
             {
-                var resp = (PaySharp.Alipay.Response.NotifyResponse)e.NotifyResponse;
+                var resp = (Spear.Payment.Alipay.Response.NotifyResponse)e.NotifyResponse;
 
                 inputDto.TradeNo = resp.OutTradeNo;
                 inputDto.Amount = (long)(resp.TotalAmount * 100);
@@ -109,9 +109,9 @@ namespace Spear.Gateway.Payment.Controllers
                 inputDto.OutTradeNo = resp.TradeNo;
                 inputDto.Mode = PaymentMode.Alipay;
             }
-            else if (e.GatewayType == typeof(PaySharp.Wechatpay.WechatpayGateway))
+            else if (e.GatewayType == typeof(Spear.Payment.Wechat.WechatGateway))
             {
-                var resp = (PaySharp.Wechatpay.Response.NotifyResponse)e.NotifyResponse;
+                var resp = (Spear.Payment.Wechat.Response.NotifyResponse)e.NotifyResponse;
                 inputDto.TradeNo = resp.OutTradeNo;
                 inputDto.Amount = (long)resp.TotalAmount;
                 inputDto.User = resp.OpenId;
@@ -138,17 +138,17 @@ namespace Spear.Gateway.Payment.Controllers
             // 订单退款时的处理代码
             TradeDto tradeDto = null;
             var dto = new TradeRefundInputDto();
-            if (e.GatewayType == typeof(PaySharp.Alipay.AlipayGateway))
+            if (e.GatewayType == typeof(AlipayGateway))
             {
-                var resp = (PaySharp.Alipay.Response.NotifyResponse)e.NotifyResponse;
+                var resp = (Spear.Payment.Alipay.Response.NotifyResponse)e.NotifyResponse;
                 tradeDto = await _tradeContract.DetailByNoAsync(resp.OutTradeNo);
                 dto.OutRefundNo = resp.TradeNo;
                 dto.RefundTime = resp.GmtRefund;
                 dto.Amount = (long)(resp.TotalAmount * 100);
             }
-            else if (e.GatewayType == typeof(PaySharp.Wechatpay.WechatpayGateway))
+            else if (e.GatewayType == typeof(Spear.Payment.Wechat.WechatGateway))
             {
-                var resp = (PaySharp.Wechatpay.Response.NotifyResponse)e.NotifyResponse;
+                var resp = (Spear.Payment.Wechat.Response.NotifyResponse)e.NotifyResponse;
                 tradeDto = await _tradeContract.DetailByNoAsync(resp.OutTradeNo);
                 dto.OutRefundNo = resp.RefundNo;
                 dto.RefundTime = resp.SuccessTime;

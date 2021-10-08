@@ -1,4 +1,4 @@
-﻿namespace Spear.Sdk.Payment.Models
+﻿namespace Spear.Payment.Sdk.Models
 {
     public class CashierInput
     {

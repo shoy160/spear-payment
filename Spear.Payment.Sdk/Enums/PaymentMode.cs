@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 
-namespace Spear.Sdk.Payment.Enums
+namespace Spear.Payment.Sdk.Enums
 {
     /// <summary> 支付方式 </summary>
     public enum PaymentMode : byte

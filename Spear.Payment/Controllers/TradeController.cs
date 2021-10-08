@@ -1,14 +1,13 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using PaySharp.Alipay.Domain;
-using PaySharp.Alipay.Request;
+using Spear.Payment.Alipay.Domain;
+using Spear.Payment.Alipay.Request;
 using Spear.AutoMapper;
 using Spear.Core;
 using Spear.Core.Dependency;
 using Spear.Core.Exceptions;
 using Spear.Core.Extensions;
 using Spear.Gateway.Payment.Filters;
-using Spear.Gateway.Payment.Payment;
 using Spear.Gateway.Payment.ViewModels;
 using Spear.Payment.Contracts;
 using Spear.Payment.Contracts.Dtos;
@@ -17,6 +16,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Spear.Payment.Payment;
 
 namespace Spear.Gateway.Payment.Controllers
 {
@@ -216,8 +216,8 @@ namespace Spear.Gateway.Payment.Controllers
             }
             else
             {
-                var wechatReq = new PaySharp.Wechatpay.Request.QueryRequest();
-                wechatReq.AddGatewayData(new PaySharp.Wechatpay.Domain.QueryModel { OutTradeNo = tradeNo });
+                var wechatReq = new Spear.Payment.Wechat.Request.QueryRequest();
+                wechatReq.AddGatewayData(new Spear.Payment.Wechat.Domain.QueryModel { OutTradeNo = tradeNo });
                 var resp = gateway.Execute(wechatReq);
                 if (resp.ReturnCode != "SUCCESS")
                 {
@@ -293,8 +293,8 @@ namespace Spear.Gateway.Payment.Controllers
             }
             else
             {
-                var wechatReq = new PaySharp.Wechatpay.Request.RefundRequest();
-                wechatReq.AddGatewayData(new PaySharp.Wechatpay.Domain.RefundModel
+                var wechatReq = new Spear.Payment.Wechat.Request.RefundRequest();
+                wechatReq.AddGatewayData(new Spear.Payment.Wechat.Domain.RefundModel
                 {
                     OutTradeNo = trade.TradeNo,
                     OutRefundNo = refundDto.RefundNo,

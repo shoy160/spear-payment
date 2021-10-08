@@ -1,0 +1,16 @@
+﻿<Project Sdk="Microsoft.NET.Sdk"> 
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <Title>Spear.Payment.Alipay</Title>
+    <Description>支付宝支付</Description>
+    <Version>1.0.2</Version>
+    <PackageTags>dotnetcore;pay;alipay;</PackageTags>
+    <PackageReleaseNotes>
+      增加退款异步通知
+    </PackageReleaseNotes>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+  </PropertyGroup> 
+  <ItemGroup>
+    <ProjectReference Include="..\Spear.Payment.Core\Spear.Payment.Core.csproj" />
+  </ItemGroup>
+</Project>

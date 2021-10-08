@@ -1,6 +1,6 @@
-﻿using Spear.Sdk.Payment.Enums;
+﻿using Spear.Payment.Sdk.Enums;
 
-namespace Spear.Sdk.Payment.Models
+namespace Spear.Payment.Sdk.Models
 {
     public class NotifyModel
     {
