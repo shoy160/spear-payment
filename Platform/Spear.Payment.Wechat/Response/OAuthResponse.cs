@@ -1,7 +1,6 @@
-﻿using Spear.Payment.Core;
-using Spear.Payment.Core.Attributes;
-using Spear.Payment.Core.Response;
+﻿using Spear.Payment.Core.Attributes;
 using Spear.Payment.Core.Gateways;
+using Spear.Payment.Core.Response;
 
 namespace Spear.Payment.Wechat.Response
 {

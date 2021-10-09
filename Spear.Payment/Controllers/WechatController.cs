@@ -1,11 +1,13 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Spear.Core;
 using Spear.Core.Dependency;
 using Spear.Core.Extensions;
+using Spear.Core.Helper.Http;
 using Spear.Core.Serialize;
 using Spear.Core.Timing;
-using Spear.Gateway.Payment.Controllers;
+using Spear.Dapper.Config;
 using Spear.Gateway.Payment.Filters;
 using Spear.Gateway.Payment.ViewModels;
 using Spear.Payment.Contracts.Dtos;
@@ -17,6 +19,7 @@ using Spear.Payment.Wechat;
 using Spear.Payment.Wechat.Domain;
 using Spear.Payment.Wechat.Request;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Spear.Payment.Controllers
@@ -438,19 +441,91 @@ namespace Spear.Payment.Controllers
         }
 
         /// <summary> OAuth认证 </summary>
+        /// <param name="project">项目编码</param>
         /// <param name="code"></param>
+        /// <param name="type"></param>
+        /// <param name="redirect"></param>
         /// <returns></returns>
-        [HttpGet("oauth"), ApiExplorerSettings(IgnoreApi = true)]
-        public ActionResult OAuth(string code)
+        [HttpGet("{project}/oauth"), ApiExplorerSettings(IgnoreApi = true), AllowAnonymous]
+        public ActionResult OAuth(string project, string code, PaymentType? type = null, string redirect = null)
         {
+            Current.SetProjectCode(project);
             var request = new OAuthRequest();
             request.AddGatewayData(new OAuthModel
             {
                 Code = code
             });
 
-            var response = Gateway().Execute(request);
+            var response = Gateway(type).Execute(request);
+            if (response.OpenId.IsNotNullOrEmpty())
+            {
+                if (redirect.IsNotNullOrEmpty())
+                {
+                    redirect = Current.SetQuery("open_id", response.OpenId, redirect);
+                    redirect = Current.SetQuery("token", response.AccessToken, redirect);
+                    return Redirect(redirect);
+                }
+            }
             return Json(response);
+        }
+
+        /// <summary> 授权跳转 </summary>
+        /// <param name="project">项目编码</param>
+        /// <param name="type"></param>
+        /// <param name="scope"></param>
+        /// <param name="state"></param>
+        /// <param name="redirect">跳转地址</param>
+        /// <returns></returns>
+        [HttpGet("{project}/login"), AllowAnonymous]
+        public ActionResult Login(string project, PaymentType type = PaymentType.Public, string scope = "snsapi_base", string state = null, string redirect = null)
+        {
+            Current.SetProjectCode(project);
+            var channel = Channel(PaymentMode.Wechat, type);
+            if (channel == null)
+                return Json(new { code = 404, message = "未知的支付渠道" });
+            var baseUri = new Uri("pay".Site());
+            var url = $"/wechat/{project}/oauth?type={(int)type}";
+            if (redirect.IsNotNullOrEmpty())
+            {
+                url += $"&redirect={redirect.UrlEncode()}";
+            }
+            var redirectUri = new Uri(baseUri, url).AbsoluteUri;
+            var dict = new Dictionary<string, object>
+            {
+                {"appid",channel.AppId },
+                {"redirect_uri",redirectUri },
+                {"response_type","code" },
+                {"scope",scope }
+            };
+            if (state.IsNotNullOrEmpty())
+            {
+                dict.Add("state", state);
+            }
+            return Redirect($"https://open.weixin.qq.com/connect/oauth2/authorize?{dict.ToUrl()}#wechat_redirect");
+        }
+
+        /// <summary> 获取用户信息 </summary>
+        /// <param name="accessToken"></param>
+        /// <param name="openId"></param>
+        /// <param name="lang"></param>
+        /// <returns></returns>
+        [HttpGet("userinfo")]
+        public async Task<ActionResult> UserInfo(string accessToken, string openId, string lang = "zh_CN")
+        {
+            var dict = new Dictionary<string, object>
+            {
+                {"access_token",accessToken },
+                {"openid",openId },
+                {"lang",lang }
+            };
+            var resp = await HttpHelper.Instance.GetAsync("https://api.weixin.qq.com/sns/userinfo", dict);
+            if (resp.IsSuccessStatusCode)
+            {
+                var result = await resp.ReadAsAsync<Dictionary<string, object>>();
+                return Json(result);
+            }
+            return Json(new { code = 500, message = "获取用户信息异常" });
+
         }
     }
 }

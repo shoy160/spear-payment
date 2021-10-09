@@ -49,7 +49,7 @@ namespace Spear.Payment.Controllers
         {
             var notifyDto = new TradeNotifyInputDto
             {
-                Type = Spear.Payment.Contracts.Enums.NotifyType.Receive,
+                Type = Contracts.Enums.NotifyType.Receive,
                 Url = CurrentIocManager.ContextWrap.RawUrl,
                 Content = string.Empty,
                 Result = "success"

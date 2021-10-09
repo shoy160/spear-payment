@@ -14,6 +14,7 @@ namespace Spear.Gateway.Payment.ViewModels
     internal static class Constants
     {
         private const string ProjectCacheKey = "__current_project";
+        private const string ProjectCodeKey = "ProjectCode";
 
         /// <summary>
         /// MD5加密
@@ -61,6 +62,11 @@ namespace Spear.Gateway.Payment.ViewModels
             context.Items.TryAdd(ProjectCacheKey, dto);
         }
 
+        public static void SetProjectCode(this HttpContext context, string code)
+        {
+            context.Items.TryAdd(ProjectCodeKey, code);
+        }
+
         public static ProjectDto Project(this HttpContext context)
         {
             ProjectDto project = null;
@@ -68,7 +74,15 @@ namespace Spear.Gateway.Payment.ViewModels
                 project = value as ProjectDto;
             if (project == null)
             {
-                var code = CurrentIocManager.Context.QueryOrForm("ProjectCode", string.Empty);
+                string code;
+                if (!context.Items.TryGetValue(ProjectCodeKey, out var tCode) || tCode == null)
+                {
+                    code = context.QueryOrForm(ProjectCodeKey, string.Empty);
+                }
+                else
+                {
+                    code = tCode.ToString();
+                }
                 if (!string.IsNullOrWhiteSpace(code))
                 {
                     project = context.RequestServices.GetService<IProjectContract>().DetailByCodeAsync(code).Result;

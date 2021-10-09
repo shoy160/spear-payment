@@ -167,6 +167,8 @@ namespace Spear.Gateway.Payment.Controllers
             if (!channels.ContainsKey(mode))
                 return Error<string>("未开通的支付方式");
             var channel = Channel(mode, type, channels);
+            if (channel == null)
+                return Error<string>($"支付途径[{type.GetText()}]未开通");
             var gateway = mode.CreateGateway(channel.Config);
             if (gateway == null)
                 return Error<string>("支付渠道配置异常");
