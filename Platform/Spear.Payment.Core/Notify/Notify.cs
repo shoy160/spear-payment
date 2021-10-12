@@ -11,9 +11,7 @@ using Spear.Payment.Core.Gateways;
 
 namespace Spear.Payment.Core.Notify
 {
-    /// <summary>
-    /// 网关返回的支付通知数据的接受
-    /// </summary>
+    /// <summary> 网关返回的支付通知数据的接受 </summary>
     public class Notify
     {
         #region 私有字段

@@ -32,7 +32,6 @@ namespace Spear.Payment.Core
         {
             var httpContextAccessor = app.ApplicationServices.GetRequiredService<IHttpContextAccessor>();
             HttpUtil.Configure(httpContextAccessor);
-
             return app;
         }
     }
