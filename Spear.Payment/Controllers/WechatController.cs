@@ -505,13 +505,15 @@ namespace Spear.Payment.Controllers
         }
 
         /// <summary> 获取用户信息 </summary>
+        /// <param name="project">项目编码</param>
         /// <param name="accessToken"></param>
         /// <param name="openId"></param>
         /// <param name="lang"></param>
         /// <returns></returns>
-        [HttpGet("userinfo")]
-        public async Task<ActionResult> UserInfo(string accessToken, string openId, string lang = "zh_CN")
+        [HttpGet("{project}/userinfo"), AllowAnonymous]
+        public async Task<ActionResult> UserInfo(string project, string accessToken, string openId, string lang = "zh_CN")
         {
+            Current.SetProjectCode(project);
             var dict = new Dictionary<string, object>
             {
                 {"access_token",accessToken },

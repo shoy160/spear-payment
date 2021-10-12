@@ -8,6 +8,8 @@ namespace Spear.Payment.Contracts.Dtos
     {
         /// <summary> 支付方式 </summary>
         public PaymentMode? Mode { get; set; }
+        /// <summary> 支付类型 </summary>
+        public PaymentType? Type { get; set; }
         /// <summary> 状态 </summary>
         public TradeStatus? Status { get; set; }
         /// <summary> 渠道ID </summary>

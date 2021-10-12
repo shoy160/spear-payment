@@ -79,6 +79,11 @@ namespace Spear.Payment.Business.Domain.Repositories
             SQL sql = $"SELECT {mode.Columns()} from [{mode.PropName()}] WHERE 1=1";
             if (dto.Mode.HasValue)
                 sql += "AND [mode]=@Mode";
+            if (dto.Type.HasValue)
+            {
+                sql += "AND [type]=@PaymentType";
+                sql = sql["PaymentType", dto.Type.Value.ToString().ToLower()];
+            }
             if (dto.Status.HasValue)
                 sql += "AND [status]=@Status";
             if (!string.IsNullOrWhiteSpace(dto.ChannelId))
@@ -100,8 +105,7 @@ namespace Spear.Payment.Business.Domain.Repositories
             if (dto.End.HasValue)
                 sql += "AND [create_time]<@End";
             sql += "ORDER BY [create_time] DESC";
-            var fsql = Connection.FormatSql(sql.ToString());
-            return await Connection.PagedListAsync<TTrade>(fsql, dto.Page, dto.Size, dto);
+            return await sql.PagedListAsync<TTrade>(Connection, dto.Page, dto.Size, dto);
         }
 
         public async Task<PagedList<TradeNotifyDto>> NotifyListAsync(int page, int size,

@@ -1,15 +1,43 @@
 <template>
   <el-main class="app-container">
     <div class="app-container">
-      <el-input v-model="listQuery.tradeNo" placeholder="交易号/订单号" style="width: 300px" />
+      <el-input
+        v-model="listQuery.tradeNo"
+        placeholder="交易号/订单号"
+        style="width: 300px"
+      />
       <el-select v-model="listQuery.mode" clearable placeholder="支付方式">
-        <el-option v-for="item in modes" :key="item.value" :label="item.text" :value="item.value" />
+        <el-option
+          v-for="item in modes"
+          :key="item.value"
+          :label="item.text"
+          :value="item.value"
+        />
+      </el-select>
+      <el-select v-model="listQuery.type" clearable placeholder="支付类型">
+        <el-option
+          v-for="item in types"
+          :key="item.value"
+          :label="item.text"
+          :value="item.value"
+        />
       </el-select>
       <el-select v-model="listQuery.status" clearable placeholder="支付状态">
-        <el-option :value="0" label="未支付" />
-        <el-option :value="1" label="已支付" />
+        <el-option
+          v-for="item in statusList"
+          :key="item.key"
+          :value="item.key"
+          :label="item.text"
+        />
       </el-select>
-      <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleSearch">{{ $t('table.search') }}</el-button>
+      <el-button
+        class="filter-item"
+        type="primary"
+        icon="el-icon-search"
+        @click="handleSearch"
+      >
+        {{ $t("table.search") }}
+      </el-button>
     </div>
     <el-table v-loading="listLoading" :data="list">
       <el-table-column type="expand">
@@ -39,12 +67,22 @@
       <el-table-column prop="projectName" label="项目" />
       <el-table-column label="金额">
         <template slot-scope="scope">
-          <b style="color:#F56C6C">￥ {{ (scope.row.amount) | amountFormatter() }}</b>
+          <b
+            style="color: #f56c6c"
+          >￥ {{ scope.row.amount | amountFormatter() }}</b
+          >
         </template>
       </el-table-column>
-      <el-table-column :label="$t('table.paymode')" :filters="modes" :filter-method="handleFilter" prop="mode">
+      <el-table-column
+        :label="$t('table.paymode')"
+        :filters="modes"
+        :filter-method="handleFilter"
+        prop="mode"
+      >
         <template slot-scope="scope">
-          <el-tag :type="['', 'info'][scope.row.mode]">{{ scope.row.modeCn }}</el-tag>
+          <el-tag :type="['', 'info'][scope.row.mode]">{{
+            scope.row.modeCn
+          }}</el-tag>
         </template>
       </el-table-column>
       <el-table-column :label="$t('table.paytype')" prop="type">
@@ -54,29 +92,40 @@
       </el-table-column>
       <el-table-column :label="$t('table.status')">
         <template slot-scope="scope">
-          <el-tag :type="['danger', 'success'][scope.row.status]">{{ scope.row.statusCn }}</el-tag>
+          <el-tag :type="['danger', 'success'][scope.row.status]">{{
+            scope.row.statusCn
+          }}</el-tag>
         </template>
       </el-table-column>
       <el-table-column :label="$t('table.date')" prop="createTime" sortable>
         <template slot-scope="scope">
-          {{ scope.row.createTime | parseTime('{y}-{m}-{d} {h}:{i}:{s}') }}
+          {{ scope.row.createTime | parseTime("{y}-{m}-{d} {h}:{i}:{s}") }}
         </template>
       </el-table-column>
       <el-table-column :label="$t('table.paidTime')" prop="paidTime" sortable>
         <template slot-scope="scope">
-          {{ scope.row.paidTime | parseTime('{y}-{m}-{d} {h}:{i}:{s}') }}
+          {{ scope.row.paidTime | parseTime("{y}-{m}-{d} {h}:{i}:{s}") }}
         </template>
       </el-table-column>
       <el-table-column :label="$t('table.actions')">
         <template slot-scope="scope">
           <el-button
             v-if="scope.row.status === 1 || scope.row.status === 3"
-            :disabled="!scope.row.notify || scope.row.notifying || scope.row.notifyTime > 0"
-            :title="scope.row.notifyTime > 0 ? `${scope.row.notifyTime}秒` : '异步通知'"
+            :disabled="
+              !scope.row.notify ||
+                scope.row.notifying ||
+                scope.row.notifyTime > 0
+            "
+            :title="
+              scope.row.notifyTime > 0
+                ? `${scope.row.notifyTime}秒`
+                : '异步通知'
+            "
             size="mini"
             icon="el-icon-bell"
             circle
-            @click="handleNotify(scope.$index, scope.row)"/>
+            @click="handleNotify(scope.$index, scope.row)"
+          />
           <el-button
             v-if="scope.row.status === 1"
             type="danger"
@@ -84,9 +133,16 @@
             size="mini"
             icon="el-icon-remove"
             circle
-            @click="handleRefund(scope.row.tradeNo)" />
-          <a v-if="scope.row.status === 0" :href="`/#/scan/${scope.row.id}`" class="el-button el-button--primary el-button--mini is-circle" target="_blank" title="收银台">
-            <i class="fa fa-money"/>
+            @click="handleRefund(scope.row.tradeNo)"
+          />
+          <a
+            v-if="scope.row.status === 0"
+            :href="`/#/scan/${scope.row.id}`"
+            class="el-button el-button--primary el-button--mini is-circle"
+            target="_blank"
+            title="收银台"
+          >
+            <i class="fa fa-money" />
           </a>
           <el-button
             v-if="scope.row.status === 0"
@@ -94,7 +150,8 @@
             size="mini"
             icon="el-icon-refresh"
             circle
-            @click="handleVerifyTrade(scope.row.tradeNo)" />
+            @click="handleVerifyTrade(scope.row.tradeNo)"
+          />
         </template>
       </el-table-column>
     </el-table>
@@ -105,7 +162,8 @@
         background
         layout="total, sizes, prev, pager, next"
         @current-change="handleCurrentChange"
-        @size-change="handleSizeChange" />
+        @size-change="handleSizeChange"
+      />
     </div>
   </el-main>
 </template>
@@ -116,6 +174,22 @@ export default {
   data() {
     return {
       modes: [{ text: '支付宝', value: 0 }, { text: '微信', value: 1 }],
+      types: [
+        { value: 0, text: 'Web' },
+        { value: 1, text: 'H5' },
+        { value: 2, text: 'App' },
+        { value: 3, text: 'Public' },
+        { value: 4, text: 'Scan' },
+        { value: 5, text: 'Barcode' },
+        { value: 6, text: 'Applet' }
+      ],
+      statusList: [
+        { key: 0, text: '待支付' },
+        { key: 1, text: '已支付' },
+        { key: 2, text: '已关闭' },
+        { key: 3, text: '已退款' },
+        { key: 4, text: '退款中' }
+      ],
       list: [],
       listLoading: true,
       listTotal: 0,
@@ -124,6 +198,7 @@ export default {
         page: 1,
         size: 10,
         mode: null,
+        type: undefined,
         tradeNo: ''
       },
       timer: null
@@ -197,21 +272,18 @@ export default {
       this.getList()
     },
     handleVerifyTrade(tradeNo) {
-      verifyTrade(tradeNo)
-        .then(() => {
-          this.$message.success('校验成功')
-          this.getList()
-        })
+      verifyTrade(tradeNo).then(() => {
+        this.$message.success('校验成功')
+        this.getList()
+      })
     },
     handleRefund(tradeNo) {
-      this.$confirm('确认要退款吗？')
-        .then(() => {
-          refund(tradeNo)
-            .then(() => {
-              this.$message.success('退款成功')
-              this.getList()
-            })
+      this.$confirm('确认要退款吗？').then(() => {
+        refund(tradeNo).then(() => {
+          this.$message.success('退款成功')
+          this.getList()
         })
+      })
     }
   },
   distroyed() {
@@ -233,4 +305,3 @@ export default {
   }
 }
 </style>
-

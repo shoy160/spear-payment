@@ -34,7 +34,7 @@ export default {
   },
   mounted() {
     homedata().then(json => {
-      console.log(json)
+      // console.log(json)
       this.statistics = json.statistic
       // this.countChartData.xAxis = this.amountChartData.xAxis = Object.keys(json.platforms[0].data)
       var options = [
