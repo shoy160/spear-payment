@@ -278,8 +278,13 @@ export default {
       })
     },
     handleRefund(tradeNo) {
-      this.$confirm('确认要退款吗？').then(() => {
-        refund(tradeNo).then(() => {
+      this.$prompt('请输入退款原因', '交易退款', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        inputPattern: /^.+$/,
+        inputErrorMessage: '请输入退款原因'
+      }).then(({ value }) => {
+        refund(tradeNo, -1, value || '').then(() => {
           this.$message.success('退款成功')
           this.getList()
         })
